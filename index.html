@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#050b16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SYSTEM">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/x-icon" href="icon.ico">
+<title>SYSTEM — Siêu Học Bá (Mobile Lite)</title>
+<style>
+:root{
+  --bg:#050b16;--panel:#0b162c;--card:#0f1f3d;--border:#1d3b6e;
+  --edge:#35c8ff;--gold:#ffd166;--ok:#3ddc97;--warn:#ff9f1c;--danger:#ff5a5f;
+  --txt:#eef6ff;--mist:#8da6c9;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system, BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.42}
+.wrap{max-width:640px;margin:0 auto;padding:10px 10px 36px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:8px}
+.between{justify-content:space-between}
+.wrap-row{flex-wrap:wrap}
+.title-bar{font-weight:800;font-size:17px;color:var(--edge);letter-spacing:.05em}
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:#13274c;color:var(--txt);border:1px solid #254b8a}
+.chip.ok{background:#0d3328;color:var(--ok);border-color:#1e6b52}
+.chip.warn{background:#3b230c;color:var(--warn);border-color:#804c14}
+.chip.danger{background:#3d1419;color:var(--danger);border-color:#8a2832}
+.chip.gold{background:#382d10;color:var(--gold);border-color:#7d631f}
+.chip.hot{background:#102e52;color:var(--edge);border-color:var(--edge)}
+.btn{border:1px solid #2b5499;background:#13284c;color:var(--txt);border-radius:8px;padding:7px 11px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn.main{background:#0e4f7a;border-color:var(--edge);color:#fff}
+.btn.ok{background:#114a37;border-color:var(--ok);color:var(--ok)}
+.btn.warn{background:#4a2c0d;border-color:var(--warn);color:var(--gold)}
+.btn.danger{background:#4a171e;border-color:var(--danger);color:#ff9ea2}
+.btn.ghost{background:transparent;border-color:#233e6b;color:var(--mist)}
+.btn.sm{padding:4px 9px;font-size:12px;border-radius:7px}
+.xp-bar{height:6px;background:#071021;border-radius:99px;overflow:hidden;margin-top:6px;border:1px solid #19325c}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--edge),var(--ok));width:0%}
+.cmd-box{display:flex;gap:6px;margin-top:8px}
+.cmd-inp{flex:1;background:#060e1f;border:1px solid var(--edge);color:#fff;border-radius:9px;padding:9px 11px;font-size:14px;outline:none}
+.cmd-inp:focus{border-color:var(--gold)}
+.quick-bar{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-top:8px;scrollbar-width:none}
+.quick-bar::-webkit-scrollbar{display:none}
+.quick-bar .btn{white-space:nowrap;flex-shrink:0}
+.reply-box{margin-top:9px;padding:10px 12px;background:#071226;border-left:3px solid var(--edge);border-radius:8px;font-size:13.8px}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-bottom:8px}
+.q-card.urgent{border-color:var(--warn)}
+.q-card.overdue{border-color:var(--danger)}
+.q-card.done{opacity:.65;border-color:#1d4d3e}
+.q-head{font-weight:700;font-size:15px;color:#fff;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.stt{color:var(--gold);font-weight:800;margin-right:6px}
+.why-txt{font-size:12.2px;color:var(--edge);margin-top:5px}
+.free-pass{background:#082b22;border:1px solid var(--ok);border-radius:12px;padding:14px;text-align:center;margin-bottom:10px}
+.timer-box{background:#12254a;border:1px solid var(--gold);border-radius:11px;padding:10px 12px;margin-bottom:10px}
+.modal-bg{position:fixed;inset:0;background:rgba(2,6,14,.85);display:none;align-items:center;justify-content:center;padding:12px;z-index:99}
+.modal-bg.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--edge);border-radius:13px;padding:15px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.inp{width:100%;background:#060e1f;border:1px solid #284c85;color:#fff;border-radius:8px;padding:8px 10px;font-size:13.5px;margin-top:4px}
+.lbl{display:block;font-size:12.5px;color:var(--mist);margin-top:9px}
+.toast{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:#0e284d;border:1px solid var(--edge);color:#fff;padding:8px 14px;border-radius:99px;font-size:13px;z-index:199;display:none}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- 1. THANH TRẠNG THÁI NHÂN VẬT & ĐỒNG BỘ ĐÁM MÂY DUY NHẤT -->
+  <header class="panel" style="padding:10px 12px">
+    <div class="row between wrap-row">
+      <div class="row" style="gap:6px">
+        <span class="title-bar">⚡ SYSTEM</span>
+        <span id="hdrRank" class="chip gold">Lv.1 • Hạng E</span>
+        <span id="hdrPts" class="chip">💰 50đ</span>
+        <span id="hdrSlot" class="chip hot">Tối</span>
+      </div>
+      <div class="row" style="gap:5px">
+        <button type="button" class="btn sm" id="btnCloudStatus" onclick="openSyncModal()">☁️ Đám mây</button>
+        <button type="button" class="btn sm ghost" onclick="syncNowManual()" title="Đồng bộ ngay với đám mây">🔄</button>
+        <button type="button" class="btn sm ghost" onclick="speakBriefing()" title="Đọc báo cáo nhiệm vụ">🔊</button>
+      </div>
+    </div>
+    <div class="xp-bar"><div id="hdrXpFill" class="xp-fill"></div></div>
+    <div class="row between" style="margin-top:4px;font-size:11.5px;color:var(--mist)">
+      <span id="hdrXpTxt">XP: 0 / 100</span>
+      <span id="hdrSyncTxt">Độc lập • Chưa gắn Gist</span>
+    </div>
+  </header>
+
+  <!-- 2. ĐỒNG HỒ TẬP TRUNG SIÊU NHẸ (HIỆN KHI BẤM LÀM QUEST) -->
+  <section id="timerBar" class="timer-box hidden">
+    <div class="row between wrap-row">
+      <div>
+        <div style="font-size:12px;color:var(--gold)">⏱️ ĐANG TẬP TRUNG LÀM NHIỆM VỤ:</div>
+        <b id="tmTitle" style="font-size:14.5px;color:#fff">—</b>
+      </div>
+      <b id="tmClock" style="font-size:22px;color:var(--gold);font-family:monospace">25:00</b>
+    </div>
+    <div class="row wrap-row" style="margin-top:8px;gap:6px">
+      <button type="button" class="btn sm ok" onclick="finishQuestQuick(activeTimer.qid,'great')">🌟 Rất tốt (100%)</button>
+      <button type="button" class="btn sm ok" onclick="finishQuestQuick(activeTimer.qid,'good')">👍 Khá tốt (80%)</button>
+      <button type="button" class="btn sm warn" onclick="finishQuestQuick(activeTimer.qid,'medium')">😐 Vừa (55%)</button>
+      <button type="button" class="btn sm ghost" onclick="stopFocusTimer()">✕ Dừng</button>
+    </div>
+  </section>
+
+  <!-- 3. TRUNG TÂM GIAO TIẾP TRỢ LÝ HỆ THỐNG -->
+  <section class="panel">
+    <div class="row between">
+      <b style="font-size:14px;color:var(--edge)">🤖 Trợ lý Hệ thống (Chat &amp; Giọng nói)</b>
+      <span id="personaChip" class="chip warn">⚖️ Kỷ luật</span>
+    </div>
+    <div class="cmd-box">
+      <button type="button" class="btn" id="btnMic" onclick="toggleVoiceMic()" title="Nói trực tiếp tiếng Việt (0 MB)">🎤</button>
+      <input type="text" id="cmdInp" class="cmd-inp" placeholder="Nói/nhập: 'tạo quest X 3 ngày làm 2 lần', 'check quest 1'..." onkeydown="if(event.key==='Enter')sendCommand()">
+      <button type="button" class="btn main" onclick="sendCommand()">Gửi</button>
+    </div>
+    <div class="quick-bar">
+      <button type="button" class="btn sm ghost" onclick="quickCmd('hôm nay còn việc gì')">🎯 Quest hiện tại</button>
+      <button type="button" class="btn sm ghost" onclick="quickCmd('ngày mai có quest gì')">📅 Quest ngày mai</button>
+      <button type="button" class="btn sm ghost" onclick="toggleStatsPanel()">📊 Chỉ số &amp; Nợ</button>
+      <button type="button" class="btn sm danger" id="btnQuickRevoke" onclick="quickCmd('nãy tôi không làm')">↩ Nãy không làm</button>
+      <button type="button" class="btn sm ok" id="btnQuickForgive" onclick="quickCmd('hôm qua làm rồi mà quên tích')">✓ Quên tích hôm qua</button>
+      <button type="button" class="btn sm warn" onclick="openHeyGoogleHelp()">🗣️ Hey Google</button>
+    </div>
+    <div id="aiReplyBox" class="reply-box hidden">
+      <div class="row between">
+        <b style="font-size:12.5px;color:var(--gold)">⚡ PHẢN HỒI HỆ THỐNG:</b>
+        <button type="button" class="btn sm ghost" style="padding:1px 6px" onclick="hideAiReply()">Ẩn</button>
+      </div>
+      <div id="aiReplyTxt" style="margin-top:4px"></div>
+      <div id="aiExecChips" class="row wrap-row" style="margin-top:6px;gap:5px"></div>
+    </div>
+  </section>
+
+  <!-- 4. BẢNG MỞ KHÓA GIỜ CHƠI TỰ DO -->
+  <section id="freePlayBanner" class="free-pass hidden">
+    <div style="font-size:16px;font-weight:800;color:var(--ok)">🔓 ĐÃ MỞ KHÓA GIỜ CHƠI TỰ DO!</div>
+    <div style="font-size:13px;color:var(--txt);margin:4px 0 10px">Ký chủ đã hoàn thành 100% nhiệm vụ ưu tiên trong khung giờ học hiện tại! Toàn bộ thời gian còn lại được phép giải trí tự do.</div>
+    <a href="https://m.youtube.com" target="_blank" rel="noopener" class="btn ok" style="text-decoration:none;display:inline-block">▶️ Mở YouTube Giải trí</a>
+  </section>
+
+  <!-- 5. BẢNG XEM NHANH CHỈ SỐ & KHOẢN NỢ (ẨN MẶC ĐỊNH ĐỂ SIÊU NHẸ) -->
+  <section id="statsPanel" class="panel hidden">
+    <div class="row between" style="margin-bottom:8px">
+      <b style="color:var(--gold)">📊 Bảng Chỉ số &amp; Kỷ luật</b>
+      <button type="button" class="btn sm ghost" onclick="toggleStatsPanel()">Đóng</button>
+    </div>
+    <div id="statsContent"></div>
+  </section>
+
+  <!-- 6. DANH SÁCH QUEST ƯU TIÊN (#1 -> #4) -->
+  <section class="panel">
+    <div class="row between" style="margin-bottom:8px">
+      <b id="questListTitle" style="font-size:14.5px;color:#fff">🔥 Nhiệm vụ Ưu tiên Khung giờ này</b>
+      <button type="button" class="btn sm ghost" id="btnToggleAllQuests" onclick="toggleShowAllQuests()">Xem tất cả</button>
+    </div>
+    <div id="questList"></div>
+  </section>
+</div>
+
+<!-- MODAL DUY NHẤT: ĐỒNG BỘ ĐÁM MÂY GITHUB GIST & GEMINI KEY -->
+<div id="syncModal" class="modal-bg">
+  <div class="modal">
+    <div class="row between">
+      <b style="font-size:16px;color:var(--gold)">☁️ Đồng bộ Đám mây 2 Chiều (PC ↔ Điện thoại)</b>
+      <button type="button" class="btn sm ghost" onclick="closeSyncModal()">✕</button>
+    </div>
+    <p style="font-size:12.5px;color:var(--mist);margin:6px 0">Kết nối duy nhất qua GitHub Gist — Hoạt động độc lập 100% kể cả khi tắt máy tính. Bạn có thể dán <b>GitHub Token (ghp_...)</b> hoặc <b>Mã Ghép Đôi</b> chép từ PC.</p>
+    <label class="lbl">GitHub Token (quyền gist) hoặc Mã Ghép Đôi (GistID|Token)
+      <input type="password" id="inpGhToken" class="inp" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+    </label>
+    <label class="lbl">Gist ID (Để trống sẽ tự động tìm kho lưu trữ trên tài khoản của bạn)
+      <input type="text" id="inpGistId" class="inp" placeholder="Tự động dò tìm hoặc dán Gist ID">
+    </label>
+    <label class="lbl">Gemini API Key (Tùy chọn — dùng khi hỏi câu phức tạp ngoài lệnh nhanh 0ms)
+      <input type="password" id="inpGeminiKey" class="inp" placeholder="AIzaSy...">
+    </label>
+    <div id="modalSyncStatus" style="font-size:12.5px;color:var(--ok);margin-top:8px"></div>
+    <div class="row wrap-row" style="margin-top:12px;gap:8px;justify-content:flex-end">
+      <button type="button" class="btn sm" onclick="manualCloudPull()">⬇️ Tải về ĐT</button>
+      <button type="button" class="btn sm" onclick="manualCloudPush()">⬆️ Đẩy lên Mây</button>
+      <button type="button" class="btn main" onclick="saveCloudConfig()">💾 Lưu &amp; Đồng bộ Tự động</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CHỌN MỨC CHẤT LƯỢNG KHI HOÀN THÀNH QUEST -->
+<div id="qualModal" class="modal-bg">
+  <div class="modal" style="max-width:360px">
+    <b id="qualQuestTitle" style="font-size:15px;color:#fff;display:block;margin-bottom:6px">Đánh giá mức độ hoàn thành</b>
+    <p style="font-size:12.5px;color:var(--mist);margin:0 0 10px">Chọn trung thực chất lượng thực hiện (Nếu sau đó thực tế không làm, nói "nãy tôi không làm" để hậu kiểm):</p>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <button type="button" class="btn ok" onclick="confirmQualityComplete('great')">🌟 Rất tốt — 100% thưởng (Không phạt)</button>
+      <button type="button" class="btn main" onclick="confirmQualityComplete('good')">👍 Khá tốt — 80% thưởng (Không phạt)</button>
+      <button type="button" class="btn warn" onclick="confirmQualityComplete('medium')">😐 Mức Vừa — 55% thưởng (Giảm 2 cấp phạt)</button>
+      <button type="button" class="btn danger" onclick="confirmQualityComplete('bad')">⚠️ Mức Tệ — 30% thưởng (Giảm 1 cấp phạt)</button>
+      <button type="button" class="btn ghost" onclick="closeQualModal()">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HƯỚNG DẪN KẾT NỐI HEY GOOGLE / GEMINI APP -->
+<div id="heyGoogleModal" class="modal-bg">
+  <div class="modal">
+    <div class="row between">
+      <b style="font-size:15.5px;color:var(--gold)">🗣️ Kết nối "Hey Google" với Gemini App</b>
+      <button type="button" class="btn sm ghost" onclick="document.getElementById('heyGoogleModal').classList.remove('show')">✕</button>
+    </div>
+    <p style="font-size:12.8px;color:var(--mist);margin:6px 0">Khi mở điện thoại và gọi <b>"Hey Google"</b>, trợ lý Gemini của bạn đã được tích hợp kỹ năng <b>@he-thong-sieu-hoc-ba</b>. Bạn có thể đọc trực tiếp các lệnh mẫu sau (bấm vào để chép):</p>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+      <button type="button" class="btn sm" style="text-align:left" onclick="copyTxt('Hệ thống, báo cáo quest khung giờ hiện tại')">🗣️ "Hệ thống, báo cáo quest khung giờ hiện tại"</button>
+      <button type="button" class="btn sm" style="text-align:left" onclick="copyTxt('Hệ thống, check hoàn thành quest số 1 mức tốt')">🗣️ "Hệ thống, check hoàn thành quest số 1 mức tốt"</button>
+      <button type="button" class="btn sm" style="text-align:left" onclick="copyTxt('Hệ thống, tạo quest tập thể dục 3 ngày làm 2 lần')">🗣️ "Hệ thống, tạo quest tập thể dục 3 ngày làm 2 lần"</button>
+      <button type="button" class="btn sm" style="text-align:left" onclick="copyTxt('Hệ thống, tạo quest nộp bài lặp lại hạn chót vào buổi chiều thứ 2 hàng tuần')">🗣️ "Hệ thống, tạo quest nộp bài lặp lại hạn chiều thứ 2 hàng tuần"</button>
+      <button type="button" class="btn sm" style="text-align:left" onclick="copyTxt('Hệ thống, nãy tôi không làm quest số 1')">🗣️ "Hệ thống, nãy tôi không làm quest số 1"</button>
+    </div>
+    <div class="row wrap-row" style="margin-top:12px;gap:8px;justify-content:space-between">
+      <button type="button" class="btn sm main" onclick="copyStateForGemini()">📋 Chép Trạng thái sang Gemini</button>
+      <button type="button" class="btn sm ok" onclick="document.getElementById('heyGoogleModal').classList.remove('show');toggleVoiceMic()">🎤 Nói trực tiếp trên App</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastEl" class="toast"></div>
+
+<script>
+const LS_STATE_KEY = "system_quest_standalone_state_v20";
+const LS_CLOUD_KEY = "system_quest_cloud_cfg_v20";
+const WK_NAMES = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"];
+
+let state = null;
+let showAllQuests = false;
+let pendingQualQid = null;
+let activeTimer = null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function toast(msg) {
+  const el = $("toastEl");
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = "block";
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = "none"; }, 3500);
+}
+
+function copyTxt(txt) {
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(() => {});
+  toast("📋 Đã sao chép!");
+}
+
+function cleanToken(raw) {
+  return String(raw || "").trim().replace(/^["']+|["']+$/g, "").replace(/^(Bearer\s+|token\s+)/i, "").trim();
+}
+function cleanGistId(raw) {
+  let g = String(raw || "").trim().replace(/^["']+|["']+$/g, "").replace(/\/+$/, "");
+  if (g.includes("|")) g = g.split("|")[0].trim();
+  if (g.includes("/")) g = g.split("/").pop().split("?")[0].split("#")[0].trim();
+  return g;
+}
+
+function loadCloudCfg() {
+  try {
+    const c = JSON.parse(localStorage.getItem(LS_CLOUD_KEY) || "{}") || {};
+    if (c.token) c.token = cleanToken(c.token);
+    if (c.gist_id) c.gist_id = cleanGistId(c.gist_id);
+    c.enabled = Boolean(c.token && c.gist_id);
+    return c;
+  } catch (e) { return {}; }
+}
+
+function saveCloudCfgLocal(cfg) {
+  try {
+    const c = Object.assign({}, cfg || {});
+    if (c.token) c.token = cleanToken(c.token);
+    if (c.gist_id) c.gist_id = cleanGistId(c.gist_id);
+    c.enabled = Boolean(c.token && c.gist_id);
+    localStorage.setItem(LS_CLOUD_KEY, JSON.stringify(c));
+  } catch (e) {}
+}
+
+// Tự động bắt tham số đăng nhập 1 chạm từ Link/QR (?sync_gist=...&sync_token=...)
+(function captureUrlSync() {
+  try {
+    const p = new URLSearchParams(window.location.search || "");
+    const g = cleanGistId(p.get("sync_gist") || "");
+    const t = cleanToken(p.get("sync_token") || "");
+    if (t) {
+      const cur = loadCloudCfg();
+      saveCloudCfgLocal({ gist_id: g || cur.gist_id || "", token: t, enabled: Boolean(g || cur.gist_id), last_status: "Đã kết nối tự động" });
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+    }
+  } catch (e) {}
+})();
+
+async function ghFetch(url, token, method = "GET", bodyObj = null) {
+  const tok = cleanToken(token);
+  const m = method.toUpperCase();
+  const reqUrl = m === "GET" ? (url + (url.includes("?") ? "&" : "?") + "_t=" + Date.now()) : url;
+  for (const pref of ["Bearer ", "token "]) {
+    const headers = { "Authorization": pref + tok, "Accept": "application/vnd.github+json" };
+    if (bodyObj !== null) headers["Content-Type"] = "application/json";
+    const res = await fetch(reqUrl, { method: m, headers, body: bodyObj !== null ? JSON.stringify(bodyObj) : undefined, cache: "no-store" });
+    if (res.status === 401 && pref === "Bearer ") continue;
+    return res;
+  }
+  return null;
+}
+
+function localTodayIso(offsetDays = 0) {
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000 + offsetDays * 86400000).toISOString().slice(0, 10);
+}
+
+function defaultState() {
+  const iso = localTodayIso(0);
+  const tom = localTodayIso(1);
+  return {
+    date: iso,
+    now: "20:00",
+    player: { xp: 0, level: 1, rank: "Hạng E", xp_into: 0, xp_need: 100, points: 50, unlocked_ranks: [] },
+    settings: { ui_mode: "auto", suggest_count: 4, gemini_api_key: "", gemini_model: "gemini-2.5-flash" },
+    windows: [
+      { id: 1, name: "Sáng", start: "05:00", end: "11:30" },
+      { id: 2, name: "Chiều", start: "11:30", end: "17:30" },
+      { id: 3, name: "Tối", start: "17:30", end: "22:00" },
+      { id: 4, name: "Khuya", start: "22:00", end: "23:59" }
+    ],
+    groups: [
+      { id: 1, name: "Trí tuệ & Học thuật", stats: [
+        { id: 1, name: "Tư duy Toán/Logic (MAD101)", value: 5, level: 1, rank: "Hạng E" },
+        { id: 2, name: "Mạng & Hệ thống (NWC204)", value: 5, level: 1, rank: "Hạng E" }
+      ]},
+      { id: 2, name: "Kỹ năng & Thể chất", stats: [
+        { id: 3, name: "Piano", value: 5, level: 1, rank: "Hạng E" },
+        { id: 4, name: "Thể lực & Cơ tay", value: 5, level: 1, rank: "Hạng E" }
+      ]}
+    ],
+    quests: [
+      { id: 1, title: "Ôn MAD101 (Buổi tối)", importance: 4, estimate: 90, duration_min: 90, xp: 40, points: 20, is_penalty: 0, done_today: false, deadline: iso, deadline_time: "22:00", deadline_window: "Tối", quota_count: 1, quota_days: 1, window_ids: [3], window_names: ["Tối"], stats: [{ stat_id: 1, name: "Tư duy Toán/Logic (MAD101)", amount: 2.2 }] },
+      { id: 2, title: "Học SEB NWC204", importance: 4, estimate: 60, duration_min: 60, xp: 40, points: 20, is_penalty: 0, done_today: false, deadline: tom, deadline_time: "11:30", deadline_window: "Sáng", quota_count: 1, quota_days: 1, window_ids: [1], window_names: ["Sáng"], stats: [{ stat_id: 2, name: "Mạng & Hệ thống (NWC204)", amount: 1.8 }] },
+      { id: 3, title: "Luyện đàn Piano hằng ngày", importance: 2, estimate: 20, duration_min: 20, xp: 20, points: 10, is_penalty: 0, done_today: false, repeat_min: 1, repeat_max: 1, quota_count: 1, quota_days: 1, window_ids: [1, 3], window_names: ["Sáng", "Tối"], stats: [{ stat_id: 3, name: "Piano", amount: 1.0 }] }
+    ],
+    debts: [],
+    penalties: [],
+    active_buffs: { persona_mode: "strict", relax_days_left: 0 },
+    analytics: { recent_logs: [], weekly_review: { obedience_pct: 85, diligence_pct: 85 } }
+  };
+}
+
+function parseHm(s) {
+  if (!s || !/^\d{1,2}:\d{2}$/.test(s)) return null;
+  const [h, m] = s.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function recomputeState(st) {
+  const now = new Date();
+  const iso = localTodayIso(0);
+  const tomIso = localTodayIso(1);
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  st.date = iso;
+  st.now = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+
+  // Tính cấp độ & hạng nhân vật
+  const p = st.player || { xp: 0, points: 0 };
+  let remXp = Math.max(0, Math.floor(p.xp || 0)), lvl = 1, need = 100;
+  while (remXp >= need && lvl < 200) { remXp -= need; lvl++; need = Math.round(100 * Math.pow(lvl, 1.15)); }
+  p.level = lvl; p.xp_into = remXp; p.xp_need = need;
+  p.rank = lvl >= 70 ? "Hạng S" : (lvl >= 50 ? "Hạng A" : (lvl >= 35 ? "Hạng B" : (lvl >= 20 ? "Hạng C" : (lvl >= 10 ? "Hạng D" : "Hạng E"))));
+  st.player = p;
+
+  const curWin = (st.windows || []).find((w) => {
+    const a = parseHm(w.start) ?? 0, b = parseHm(w.end) ?? 1440;
+    return nowMin >= a && nowMin <= b;
+  }) || { id: 3, name: "Tối", start: "17:30", end: "22:00" };
+  st.window = curWin;
+
+  const logs = (st.analytics && Array.isArray(st.analytics.recent_logs)) ? st.analytics.recent_logs : [];
+
+  // Tính tải sáng mai để xét Lookahead Pull-Forward
+  let tomMorningLoad = 0;
+  (st.quests || []).forEach((q) => {
+    if (q.is_penalty || q.done_today) return;
+    const dlD = q.deadline || q.scheduled_date || iso;
+    const dlM = parseHm(q.deadline_time) ?? (q.deadline_window === "Sáng" ? 690 : 1320);
+    if (dlD === tomIso && dlM <= 750) tomMorningLoad += +(q.estimate || q.duration_min || 25);
+  });
+
+  const planItems = [];
+  const jsWeekday = (now.getDay() + 6) % 7; // 0=Thứ 2 .. 6=Chủ nhật
+
+  (st.quests || []).forEach((q) => {
+    if (q.is_penalty) return;
+    const imp = Math.min(5, Math.max(1, +(q.importance || q.difficulty || 2)));
+    q.importance = imp;
+    const est = +(q.estimate || q.estimate_min || q.duration_min || 25);
+    q.estimate = est;
+    q.duration_min = +(q.duration_min || est);
+
+    const qc = Math.max(1, +(q.quota_count || 1));
+    const qd = Math.max(1, +(q.quota_days || q.repeat_min || 1));
+    q.quota_count = qc;
+    q.quota_days = qd;
+
+    const rwk = (q.repeat_weekday !== null && q.repeat_weekday !== undefined && q.repeat_weekday !== "") ? +q.repeat_weekday : null;
+    q.repeat_weekday = rwk;
+    const winMap = { "sáng": "11:30", "chiều": "17:30", "tối": "22:00", "khuya": "23:59" };
+    if (q.deadline_window && !q.deadline_time) {
+      q.deadline_time = winMap[String(q.deadline_window).toLowerCase()] || "22:00";
+    }
+
+    // Đếm số lần hoàn thành hôm nay
+    const doneTodayCnt = logs.filter((l) => (l.quest_id === q.id || l.title === q.title) && String(l.done_at || "").slice(0, 10) === iso).length || (q.done_today ? 1 : 0);
+    q.done_count_today = doneTodayCnt;
+
+    if (rwk !== null && rwk >= 0 && rwk <= 6) {
+      let daysAhead = (rwk - jsWeekday + 7) % 7;
+      if (daysAhead === 0 && doneTodayCnt >= qc) daysAhead = 7;
+      q.deadline = localTodayIso(daysAhead);
+      q.repeat_weekday_label = `📅 Định kỳ: ${q.deadline_window ? q.deadline_window + " " : (q.deadline_time ? q.deadline_time + " " : "")}${WK_NAMES[rwk]} hàng tuần`;
+    }
+
+    // Tính tiến độ chu kỳ X lần / Y ngày
+    const hasCycle = Boolean(q.repeat_min || qc > 1 || qd > 1 || rwk !== null);
+    q.quota_urgent_today = false;
+    q.quota_flexible_today = false;
+    if (hasCycle) {
+      if (qd === 1 && rwk === null) {
+        q.done_in_cycle = doneTodayCnt;
+        q.quota_label = qc > 1 ? `🔄 ${doneTodayCnt}/${qc} lần/ngày` : "🔄 1 lần/ngày";
+        q.done_today = doneTodayCnt >= qc;
+        if (!q.done_today) q.quota_urgent_today = true;
+      } else {
+        const effDays = (rwk !== null && qd <= 1) ? 7 : qd;
+        const cutoffIso = localTodayIso(-(effDays - 1));
+        const doneCycle = logs.filter((l) => (l.quest_id === q.id || l.title === q.title) && String(l.done_at || "").slice(0, 10) >= cutoffIso).length || (q.done_today ? 1 : 0);
+        q.done_in_cycle = doneCycle;
+        const remTimes = Math.max(0, qc - doneCycle);
+        const dlDateForRem = q.deadline || localTodayIso(Math.max(0, effDays - 1));
+        const remDays = Math.max(1, Math.round((new Date(dlDateForRem + "T00:00:00") - new Date(iso + "T00:00:00")) / 86400000) + 1);
+        q.quota_label = `🔄 ${doneCycle}/${qc} lần / ${effDays} ngày (Còn ${remDays} ngày)`;
+        if (remTimes <= 0) {
+          q.done_today = true;
+        } else if (doneTodayCnt >= 1 && remDays > remTimes) {
+          q.done_today = true;
+        } else {
+          q.done_today = false;
+          if (remDays <= remTimes) q.quota_urgent_today = true;
+          else q.quota_flexible_today = true;
+        }
+      }
+    } else {
+      q.done_today = doneTodayCnt >= 1;
+    }
+
+    const dlDate = q.deadline || q.scheduled_date || iso;
+    const daysLeft = Math.round((new Date(dlDate + "T00:00:00") - new Date(iso + "T00:00:00")) / 86400000);
+    const dlMin = parseHm(q.deadline_time) ?? 1320;
+    const isDueTodayHard = (daysLeft <= 0 && Boolean(q.deadline || q.deadline_time || q.deadline_window)) || q.quota_urgent_today;
+    q.is_overdue_now = Boolean(!q.done_today && ((daysLeft < 0) || (daysLeft === 0 && Boolean(q.deadline_time || q.deadline_window) && nowMin >= dlMin)));
+
+    if (imp >= 3 && (isDueTodayHard || q.deadline || q.deadline_time || q.deadline_window) && !q.quota_flexible_today) {
+      q.mandatory = true;
+      q.mandatory_label = q.is_overdue_now
+        ? `⚠️ QUÁ HẠN (${q.deadline_time || "Hôm nay"})`
+        : `Bắt buộc trước ${q.deadline_time || "22:00"}${daysLeft === 1 ? " (Ngày mai)" : ""}`;
+    } else {
+      q.mandatory = false;
+      q.mandatory_label = "";
+    }
+
+    const pulled = !q.done_today && daysLeft === 1 && dlMin <= 750 && ((imp >= 4 && est >= 40) || (imp >= 3 && tomMorningLoad > 75));
+    q.pulled_to_tonight = pulled;
+
+    if (q.done_today) { q.status = "done"; return; }
+    if (daysLeft > 1 && !pulled && !q.quota_flexible_today && !q.quota_urgent_today) { q.status = "scheduled"; return; }
+    q.status = "due";
+
+    let urg = 3;
+    if (q.is_overdue_now) urg = 0;
+    else if (isDueTodayHard) urg = 1;
+    else if (pulled || q.quota_flexible_today) urg = 2;
+    q.urgency_tier = urg;
+    q.abs_deadline_min = Math.max(0, daysLeft) * 1440 + dlMin;
+    q.priority_score = imp * 35 + est * 0.5 + (urg === 0 ? 250 : (urg === 1 ? 180 : (urg === 2 ? 110 : 0)));
+
+    let reason = `Quan trọng ${imp}/5 • ${est} phút`;
+    if (urg === 0) reason = `⚠️ ĐÃ QUÁ HẠN (${q.deadline_time || "Hôm nay"}) — Xử lý ngay!`;
+    else if (q.quota_urgent_today && qd > 1) reason = `⏰ Sát hạn chỉ tiêu ${q.quota_label} — Cần làm hôm nay!`;
+    else if (urg === 1) reason = `⏰ Ưu tiên #1 Thời gian: Hạn trước ${q.deadline_time || "22:00"} hôm nay`;
+    else if (pulled) reason = `🧠 Quyết định Hệ thống: Đẩy sớm từ Sáng mai (Mức ${imp}/5 • ${est}p, tránh quá tải Sáng mai)`;
+    else if (q.quota_flexible_today) reason = `🔄 Linh hoạt thời gian: ${q.quota_label}`;
+
+    planItems.push({ id: q.id, urgency_tier: urg, abs_deadline_min: q.abs_deadline_min, importance: imp, est, score: q.priority_score, reason });
+  });
+
+  planItems.sort((a, b) => a.urgency_tier - b.urgency_tier || a.abs_deadline_min - b.abs_deadline_min || b.importance - a.importance || b.est - a.est || b.score - a.score);
+  st.plan = { items: planItems };
+  st.suggestions = planItems.map((x) => x.id);
+  return st;
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_STATE_KEY);
+    if (raw) return recomputeState(JSON.parse(raw));
+  } catch (e) {}
+  const def = recomputeState(defaultState());
+  try { localStorage.setItem(LS_STATE_KEY, JSON.stringify(def)); } catch (e) {}
+  return def;
+}
+
+function saveState(st, pushCloud = true) {
+  state = recomputeState(st);
+  try { localStorage.setItem(LS_STATE_KEY, JSON.stringify(state)); } catch (e) {}
+  renderApp();
+  if (pushCloud) cloudPush(state);
+}
+
+function sanitizeForCloud(stObj) {
+  const copy = JSON.parse(JSON.stringify(stObj || {}));
+  if (copy.cloud_sync) copy.cloud_sync.token = "";
+  if (copy.settings) {
+    copy.settings.gemini_api_key = "";
+    copy.settings.app_password = "";
+  }
+  return copy;
+}
+
+async function cloudPush(st) {
+  const cfg = loadCloudCfg();
+  if (!cfg.token || !cfg.gist_id) return { ok: false, error: "Chưa kết nối GitHub Gist." };
+  try {
+    const cleanSnap = sanitizeForCloud(st);
+    const bundle = {
+      bundle: "system_quest_parts",
+      version: "20.2",
+      exported_at: new Date().toISOString().slice(0, 19),
+      source: "mobile",
+      state_snapshot: cleanSnap,
+      parts: {
+        stats: {
+          part: "stats",
+          xp: st.player ? st.player.xp : 0,
+          points: st.player ? st.player.points : 0,
+          unlocked_ranks: (st.player && st.player.unlocked_ranks) || [],
+          groups: (st.groups || []).map((g, gi) => ({
+            name: g.name, sort: gi,
+            stats: (g.stats || []).map((s, si) => ({ name: s.name, value: s.value, last_trained: s.last_trained || null, sort: si + 1 }))
+          }))
+        },
+        quests: {
+          part: "quests",
+          windows: [
+            { name: "Sáng", start_min: 300, end_min: 690 },
+            { name: "Chiều", start_min: 690, end_min: 1050 },
+            { name: "Tối", start_min: 1050, end_min: 1320 },
+            { name: "Khuya", start_min: 1320, end_min: 1439 }
+          ],
+          quests: (st.quests || []).map((q) => ({
+            title: q.title,
+            difficulty: q.importance || 2,
+            importance: q.importance || 2,
+            estimate_min: q.estimate || q.duration_min || 25,
+            duration_min: q.duration_min || q.estimate || 25,
+            timer_mode: q.timer_mode || "countdown",
+            xp: q.xp || 20,
+            points: q.points || 10,
+            repeat_min: q.repeat_min || (q.quota_days > 1 || q.quota_count > 1 ? q.quota_days : null),
+            repeat_max: q.repeat_max || (q.quota_days > 1 || q.quota_count > 1 ? q.quota_days : null),
+            quota_count: q.quota_count || 1,
+            quota_days: q.quota_days || 1,
+            repeat_weekday: q.repeat_weekday !== undefined ? q.repeat_weekday : null,
+            last_done: q.last_done || (q.done_today ? st.date : null),
+            is_penalty: q.is_penalty ? 1 : 0,
+            deadline: q.deadline || null,
+            deadline_time: q.deadline_time || null,
+            deadline_window: q.deadline_window || null,
+            scheduled_date: q.scheduled_date || null,
+            window_names: q.window_names || ["Tối"],
+            stats: (q.stats || []).map((s) => ({ group_name: "Trí tuệ & Học thuật", stat_name: s.name || s.stat_name || "Tự học", amount: s.amount || 1 }))
+          })),
+          log: (st.analytics && st.analytics.recent_logs) || []
+        }
+      }
+    };
+    const res = await ghFetch("https://api.github.com/gists/" + cfg.gist_id, cfg.token, "PATCH", {
+      files: { "system_quest_cloud_sync.json": { content: JSON.stringify(bundle) } }
+    });
+    if (!res || !res.ok) return { ok: false, error: "Lỗi GitHub (" + (res ? res.status : "mạng") + ")" };
+    cfg.last_sync_at = bundle.exported_at;
+    cfg.last_status = "Đồng bộ lúc " + new Date().toTimeString().slice(0, 5);
+    saveCloudCfgLocal(cfg);
+    updateSyncHeader();
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+async function cloudPull() {
+  const cfg = loadCloudCfg();
+  if (!cfg.token || !cfg.gist_id) return { ok: false, error: "Chưa cấu hình GitHub Token." };
+  try {
+    const res = await ghFetch("https://api.github.com/gists/" + cfg.gist_id, cfg.token, "GET");
+    if (!res || !res.ok) return { ok: false, error: "Không tải được Gist (Mã " + (res ? res.status : "lỗi") + ")" };
+    const gobj = await res.json();
+    const filesMap = gobj.files || {};
+    const fEntry = filesMap["system_quest_cloud_sync.json"] || Object.values(filesMap)[0];
+    if (!fEntry) return { ok: false, error: "Gist trống." };
+    let raw = fEntry.content || "";
+    if (fEntry.truncated && fEntry.raw_url) {
+      const r2 = await ghFetch(fEntry.raw_url, cfg.token, "GET");
+      if (r2 && r2.ok) raw = await r2.text();
+    }
+    if (!raw) return { ok: false, error: "Nội dung Gist trống." };
+    const remote = JSON.parse(raw);
+    const localGem = (state && state.settings && state.settings.gemini_api_key) || "";
+    if (remote.state_snapshot && typeof remote.state_snapshot === "object") {
+      const next = remote.state_snapshot;
+      if (localGem && next.settings) next.settings.gemini_api_key = localGem;
+      cfg.last_sync_at = remote.exported_at || "";
+      cfg.last_status = "Đã đồng bộ lúc " + new Date().toTimeString().slice(0, 5);
+      saveCloudCfgLocal(cfg);
+      saveState(next, false);
+      return { ok: true };
+    }
+    return { ok: false, error: "Gist chưa có dữ liệu." };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+function updateSyncHeader() {
+  const cfg = loadCloudCfg();
+  const btn = $("btnCloudStatus");
+  const txt = $("hdrSyncTxt");
+  if (btn) {
+    btn.textContent = cfg.enabled ? "🟢 Đám mây" : "☁️ Kết nối PC";
+    btn.className = "btn sm " + (cfg.enabled ? "ok" : "warn");
+  }
+  if (txt) {
+    txt.textContent = cfg.enabled ? (cfg.last_status || "Đã bật đồng bộ 2 chiều") : "Chế độ Độc lập (Bấm ☁️ để nối PC)";
+  }
+}
+
+function renderApp() {
+  if (!state) return;
+  const p = state.player || {};
+  $("hdrRank").textContent = `Lv.${p.level || 1} • ${p.rank || "Hạng E"}`;
+  $("hdrPts").textContent = `💰 ${p.points || 0}đ`;
+  $("hdrSlot").textContent = (state.window && state.window.name) ? `${state.window.name} (${state.now})` : state.now;
+  const pct = Math.min(100, Math.round(((p.xp_into || 0) / Math.max(1, p.xp_need || 100)) * 100));
+  $("hdrXpFill").style.width = pct + "%";
+  $("hdrXpTxt").textContent = `XP: ${p.xp_into || 0} / ${p.xp_need || 100} (Tổng ${p.xp || 0} XP)`;
+  updateSyncHeader();
+
+  const isRelaxed = state.active_buffs && state.active_buffs.persona_mode === "relaxed";
+  const pChip = $("personaChip");
+  pChip.textContent = isRelaxed ? "🌿 Thoải mái" : "⚖️ Kỷ luật";
+  pChip.className = "chip " + (isRelaxed ? "ok" : "warn");
+
+  const qMap = {};
+  (state.quests || []).forEach((q) => { qMap[q.id] = q; });
+  const planItems = (state.plan && state.plan.items) || [];
+
+  // Kiểm tra điều kiện Mở khóa Giờ Chơi Tự Do
+  const hasOpenDebt = Boolean((state.debts && state.debts.length) || (state.penalties && state.penalties.length));
+  const totalNonPen = (state.quests || []).filter((q) => !q.is_penalty).length;
+  const hasUrgentLeft = planItems.some((it) => it.urgency_tier <= 2);
+  const freeUnlocked = totalNonPen > 0 && !hasUrgentLeft && !hasOpenDebt;
+  $("freePlayBanner").classList.toggle("hidden", !freeUnlocked);
+
+  // Danh sách Quest ưu tiên (#1 -> #4 hoặc Xem tất cả)
+  const visibleItems = showAllQuests ? planItems : planItems.slice(0, 4);
+  const doneQuests = (state.quests || []).filter((q) => !q.is_penalty && q.done_today);
+  $("btnToggleAllQuests").textContent = showAllQuests ? "Thu gọn (Top 4)" : `Xem tất cả (${planItems.length + doneQuests.length})`;
+
+  let html = "";
+  if (!visibleItems.length && !doneQuests.length) {
+    html = `<div style="color:var(--mist);font-size:13.5px;text-align:center;padding:14px">Chưa có nhiệm vụ nào. Hãy nói với Trợ lý ở trên để tạo quest mới!</div>`;
+  } else {
+    visibleItems.forEach((it, idx) => {
+      const q = qMap[it.id];
+      if (!q) return;
+      const stt = idx + 1;
+      const stRewards = (q.stats || []).map((s) => `+${s.amount} ${esc(s.name)}`).join(", ");
+      const cls = q.is_overdue_now ? "overdue" : (it.urgency_tier <= 1 ? "urgent" : "");
+      html += `<div class="q-card ${cls}">
+        <div class="q-head">
+          <div><span class="stt">#${stt}</span>${esc(q.title)}</div>
+          <span class="chip ${q.importance >= 4 ? 'danger' : ''}">Mức ${q.importance}/5</span>
+        </div>
+        <div class="row wrap-row" style="gap:5px;margin-top:6px">
+          <span class="chip">⏱️ ${q.estimate || 25}p</span>
+          ${q.repeat_weekday_label ? `<span class="chip gold">${esc(q.repeat_weekday_label)}</span>` : ""}
+          ${q.quota_label ? `<span class="chip ${q.quota_urgent_today ? 'warn' : 'ok'}">${esc(q.quota_label)}</span>` : ""}
+          ${q.mandatory_label ? `<span class="chip warn">${esc(q.mandatory_label)}</span>` : ""}
+          ${q.pulled_to_tonight ? `<span class="chip hot">🧠 Đẩy sớm từ Sáng mai</span>` : ""}
+          <span class="chip gold">+${q.xp || 20} XP • +${q.points || 10}đ${stRewards ? " • " + stRewards : ""}</span>
+        </div>
+        <div class="why-txt">${esc(it.reason || "")}</div>
+        <div class="row wrap-row" style="margin-top:8px;gap:6px">
+          <button type="button" class="btn sm ok" onclick="openQualModal(${q.id})">✓ Hoàn thành</button>
+          <button type="button" class="btn sm main" onclick="startFocusTimer(${q.id})">▶ Bấm giờ (${q.estimate || 25}p)</button>
+          <button type="button" class="btn sm ghost" onclick="quickCmd('quest thứ ${stt} này tôi chắc chắn sẽ làm và làm tốt')">🔥 Cam kết làm tốt</button>
+        </div>
+      </div>`;
+    });
+
+    if (showAllQuests && doneQuests.length) {
+      doneQuests.forEach((q) => {
+        html += `<div class="q-card done">
+          <div class="q-head">
+            <div>✓ ${esc(q.title)}</div>
+            <span class="chip ok">Đã xong hôm nay</span>
+          </div>
+          <div class="row wrap-row" style="gap:5px;margin-top:6px">
+            ${q.quota_label ? `<span class="chip ok">${esc(q.quota_label)}</span>` : ""}
+            <button type="button" class="btn sm danger" onclick="revokeQuest(${q.id})">↩ Nãy chưa làm (Hậu kiểm)</button>
+          </div>
+        </div>`;
+      });
+    }
+  }
+  $("questList").innerHTML = html;
+}
+
+function toggleShowAllQuests() {
+  showAllQuests = !showAllQuests;
+  renderApp();
+}
+
+function toggleStatsPanel() {
+  const el = $("statsPanel");
+  const hide = !el.classList.contains("hidden");
+  if (hide) { el.classList.add("hidden"); return; }
+  const wr = (state.analytics && state.analytics.weekly_review) || { diligence_pct: 85, obedience_pct: 85 };
+  let h = `<div class="row wrap-row" style="gap:6px;margin-bottom:8px">
+    <span class="chip ok">Độ siêng năng: ${wr.diligence_pct || 85}%</span>
+    <span class="chip hot">Điểm nghe lời: ${wr.obedience_pct || 85}%</span>
+  </div>`;
+  if (state.debts && state.debts.length) {
+    h += `<div style="margin-bottom:8px;padding:8px;background:#3b1419;border-radius:8px;font-size:13px">
+      <b style="color:var(--danger)">⚠️ Khoản nợ kỷ luật đang mở (${state.debts.length}):</b><br>
+      ${state.debts.map((d) => `• ${esc(d.quest_title)} (${esc(d.level_name || "Cấp 1")})`).join("<br>")}
+    </div>`;
+  }
+  (state.groups || []).forEach((g) => {
+    h += `<div style="margin-top:6px"><b style="font-size:13px;color:var(--edge)">${esc(g.name)}</b><div class="row wrap-row" style="gap:5px;margin-top:4px">`;
+    (g.stats || []).forEach((s) => {
+      h += `<span class="chip">${esc(s.name)}: <b style="color:var(--gold);margin-left:4px">${Math.round((s.value || 0) * 100) / 100}</b></span>`;
+    });
+    h += `</div></div>`;
+  });
+  $("statsContent").innerHTML = h;
+  el.classList.remove("hidden");
+}
+
+/* ================= HOÀN THÀNH QUEST, HẬU KIỂM & BẤM GIỜ ================= */
+function openQualModal(qid) {
+  pendingQualQid = qid;
+  const q = (state.quests || []).find((x) => x.id === +qid);
+  $("qualQuestTitle").textContent = q ? `Hoàn thành: ${q.title}` : "Chọn mức độ hoàn thành";
+  $("qualModal").classList.add("show");
+}
+function closeQualModal() {
+  pendingQualQid = null;
+  $("qualModal").classList.remove("show");
+}
+function confirmQualityComplete(qual) {
+  const qid = pendingQualQid;
+  closeQualModal();
+  if (qid) finishQuestQuick(qid, qual);
+}
+
+function finishQuestQuick(qid, qual = "good") {
+  const q = (state.quests || []).find((x) => x.id === +qid);
+  if (!q) return;
+  if (activeTimer && activeTimer.qid === q.id) stopFocusTimer();
+  const qMult = { great: 1.0, good: 0.8, medium: 0.55, bad: 0.3 }[qual] || 0.8;
+  const qLbl = { great: "Rất tốt (100%)", good: "Khá tốt (80%)", medium: "Vừa (55%)", bad: "Tệ (30%)" }[qual] || "Khá tốt";
+  const xpGain = Math.round((q.xp || 20) * qMult);
+  const ptGain = Math.round((q.points || 10) * qMult);
+
+  state._last_undo = { quest_id: q.id, title: q.title, xp_gain: xpGain, pt_gain: ptGain, stat_deltas: [], log_id: Date.now() };
+  state.player.xp = (state.player.xp || 0) + xpGain;
+  state.player.points = (state.player.points || 0) + ptGain;
+  q.last_done = state.date;
+
+  (q.stats || []).forEach((qs) => {
+    const addAmt = Math.round((+(qs.amount || 1) * qMult) * 100) / 100;
+    (state.groups || []).forEach((g) => {
+      (g.stats || []).forEach((s) => {
+        if (s.id === qs.stat_id || s.name.toLowerCase() === String(qs.name || "").toLowerCase()) {
+          s.value = Math.round(((s.value || 0) + addAmt) * 100) / 100;
+          s.last_trained = state.date;
+          state._last_undo.stat_deltas.push({ stat_id: s.id, amount: addAmt });
+        }
+      });
+    });
+  });
+
+  state.analytics = state.analytics || { recent_logs: [] };
+  state.analytics.recent_logs = state.analytics.recent_logs || [];
+  state.analytics.recent_logs.unshift({
+    id: state._last_undo.log_id,
+    quest_id: q.id,
+    title: q.title,
+    done_at: new Date().toISOString().slice(0, 19),
+    seconds: (q.estimate || 25) * 60,
+    xp: xpGain,
+    points: ptGain,
+    quality: qual
+  });
+
+  saveState(state, true);
+  toast(`✅ Đã hoàn thành "${q.title}" (${qLbl}: +${xpGain} XP, +${ptGain}đ)!`);
+}
+
+function revokeQuest(qid = null) {
+  const undo = state._last_undo;
+  let q = qid ? (state.quests || []).find((x) => x.id === +qid) : null;
+  if (!q && undo && undo.quest_id) q = (state.quests || []).find((x) => x.id === +undo.quest_id);
+  if (!q) q = (state.quests || []).find((x) => x.done_today);
+  if (!q) { toast("Không có nhiệm vụ vừa hoàn thành để thu hồi."); return null; }
+
+  if (undo && undo.quest_id === q.id) {
+    state.player.xp = Math.max(0, (state.player.xp || 0) - (undo.xp_gain || 0));
+    state.player.points = Math.max(0, (state.player.points || 0) - (undo.pt_gain || 0));
+    (undo.stat_deltas || []).forEach((d) => {
+      (state.groups || []).forEach((g) => {
+        (g.stats || []).forEach((s) => {
+          if (s.id === d.stat_id) s.value = Math.max(0, Math.round(((s.value || 0) - d.amount) * 100) / 100);
+        });
+      });
+    });
+    if (state.analytics && Array.isArray(state.analytics.recent_logs)) {
+      state.analytics.recent_logs = state.analytics.recent_logs.filter((l) => l.id !== undo.log_id);
+    }
+    state._last_undo = null;
+  } else if (state.analytics && Array.isArray(state.analytics.recent_logs)) {
+    const idx = state.analytics.recent_logs.findIndex((l) => l.quest_id === q.id || l.title === q.title);
+    if (idx !== -1) state.analytics.recent_logs.splice(idx, 1);
+  }
+  q.done_today = false;
+  q.last_done = null;
+
+  const imp = +(q.importance || 2);
+  const isRelaxed = state.active_buffs && state.active_buffs.persona_mode === "relaxed";
+  const penalized = imp >= 3 && !isRelaxed;
+  let lvlName = imp >= 5 ? "Cấp 3" : (imp === 4 ? "Cấp 2" : "Cấp 1");
+  if (penalized) {
+    state.debts = state.debts || [];
+    state.debts.push({ id: Date.now(), quest_id: q.id, quest_title: q.title, day: state.date, level_name: lvlName, status: "open" });
+  }
+  saveState(state, true);
+  return { ok: true, title: q.title, importance: imp, penalized, level_name: lvlName };
+}
+
+function startFocusTimer(qid) {
+  const q = (state.quests || []).find((x) => x.id === +qid);
+  if (!q) return;
+  if (activeTimer && activeTimer.iv) clearInterval(activeTimer.iv);
+  const totalSec = (q.estimate || q.duration_min || 25) * 60;
+  activeTimer = { qid: q.id, title: q.title, remSec: totalSec };
+  $("tmTitle").textContent = q.title;
+  $("timerBar").classList.remove("hidden");
+  const tick = () => {
+    const m = Math.floor(activeTimer.remSec / 60), s = activeTimer.remSec % 60;
+    $("tmClock").textContent = String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+    if (activeTimer.remSec <= 0) {
+      clearInterval(activeTimer.iv);
+      speakVi(`Đã hết giờ làm nhiệm vụ ${q.title}! Ký chủ hãy xác nhận mức độ hoàn thành.`);
+      openQualModal(q.id);
+    }
+    activeTimer.remSec--;
+  };
+  tick();
+  activeTimer.iv = setInterval(tick, 1000);
+}
+
+function stopFocusTimer() {
+  if (activeTimer && activeTimer.iv) clearInterval(activeTimer.iv);
+  activeTimer = null;
+  $("timerBar").classList.add("hidden");
+}
+
+/* ================= BỘ XỬ LÝ TRỢ LÝ HỆ THỐNG (0MS + ĐA BIẾN THỂ X LẦN / Y NGÀY) ================= */
+function parseFlexSchedule(low) {
+  const clean = low.replace(/\b[1-5]\s*\/\s*5\b/g, " ");
+  let qc = null, qd = null, rwk = null, wkLbl = null;
+  let isRep = /(lặp lại|hàng ngày|hằng ngày|mỗi ngày|ngày nào cũng|hàng tuần|hằng tuần|mỗi tuần|định kỳ)/.test(clean);
+  const wkRules = [
+    [/\b(thứ\s*2|thứ\s*hai|t2)\b/, 0, "Thứ 2"],
+    [/\b(thứ\s*3|thứ\s*ba|t3)\b/, 1, "Thứ 3"],
+    [/\b(thứ\s*4|thứ\s*tư|t4)\b/, 2, "Thứ 4"],
+    [/\b(thứ\s*5|thứ\s*năm|t5)\b/, 3, "Thứ 5"],
+    [/\b(thứ\s*6|thứ\s*sáu|t6)\b/, 4, "Thứ 6"],
+    [/\b(thứ\s*7|thứ\s*bảy|t7)\b/, 5, "Thứ 7"],
+    [/\b(chủ\s*nhật|cn)\b/, 6, "Chủ nhật"]
+  ];
+  for (const [rx, wi, wl] of wkRules) {
+    if (rx.test(clean)) { rwk = wi; wkLbl = wl; break; }
+  }
+  const mDaysFirst = clean.match(/\b(\d+)\s*(ngày|tuần)\s*(?:làm\s*|tập\s*|học\s*)?(\d+)\s*lần\b/);
+  if (mDaysFirst) {
+    qd = parseInt(mDaysFirst[1], 10) * (mDaysFirst[2] === "tuần" ? 7 : 1);
+    qc = parseInt(mDaysFirst[3], 10);
+    isRep = true;
+  }
+  if (qc === null) {
+    const mTimesFirst = clean.match(/\b(\d+)\s*(?:lần\s*)?(?:\/|trên|trong|mỗi)\s*(\d+)?\s*(ngày|tuần)\b/);
+    if (mTimesFirst) {
+      qc = parseInt(mTimesFirst[1], 10);
+      const dRaw = mTimesFirst[2] ? parseInt(mTimesFirst[2], 10) : 1;
+      qd = dRaw * (mTimesFirst[3] === "tuần" ? 7 : 1);
+      isRep = true;
+    }
+  }
+  if (qc === null && /(hàng ngày|hằng ngày|mỗi ngày|ngày nào cũng)/.test(clean)) {
+    qc = 1; qd = 1; isRep = true;
+  }
+  if (rwk !== null) {
+    isRep = true;
+    if (qc === null) qc = 1;
+    if (qd === null) qd = 7;
+  } else if (isRep && qc === null) {
+    qc = 1; qd = 1;
+  }
+  const hasFlex = Boolean(isRep || qc !== null || qd !== null || rwk !== null);
+  const sum = [];
+  if (rwk !== null && wkLbl) sum.push(`Định kỳ ${wkLbl} hàng tuần`);
+  if (qc !== null && qd !== null) sum.push(qd === 1 ? `${qc} lần/ngày` : `${qc} lần/${qd} ngày`);
+  return { hasFlex, qc, qd, rwk, wkLbl, summary: sum.join(" • ") };
+}
+
+function resolveQuestByText(low) {
+  const planItems = (state.plan && state.plan.items) || [];
+  const qMap = {};
+  (state.quests || []).forEach((q) => { qMap[q.id] = q; });
+  const mStt = low.match(/(?:quest|nhiệm vụ|việc|số|thứ|#)\s*(?:số\s*|thứ\s*|#\s*)?(\d+)/);
+  if (mStt) {
+    const num = parseInt(mStt[1], 10);
+    if (planItems[num - 1] && qMap[planItems[num - 1].id]) return { q: qMap[planItems[num - 1].id], stt: num };
+    if (qMap[num]) return { q: qMap[num], stt: num };
+  }
+  for (const q of (state.quests || [])) {
+    if (q.title && low.includes(q.title.toLowerCase())) return { q, stt: null };
+  }
+  if (planItems.length && qMap[planItems[0].id]) return { q: qMap[planItems[0].id], stt: 1 };
+  return { q: (state.quests || [])[0] || null, stt: 1 };
+}
+
+function showAiReply(replyTxt, execList = []) {
+  $("aiReplyBox").classList.remove("hidden");
+  $("aiReplyTxt").textContent = replyTxt;
+  $("aiExecChips").innerHTML = (execList || []).map((x) => `<span class="chip ok">⚡ ${esc(x)}</span>`).join("");
+  speakVi(replyTxt);
+}
+function hideAiReply() {
+  $("aiReplyBox").classList.add("hidden");
+}
+
+function quickCmd(txt) {
+  $("cmdInp").value = txt;
+  sendCommand();
+}
+
+async function sendCommand() {
+  const inp = $("cmdInp");
+  const msg = (inp.value || "").trim();
+  if (!msg) return;
+  inp.value = "";
+  const low = msg.toLowerCase();
+  const flex = parseFlexSchedule(low);
+
+  // 1. Hỏi quest khung giờ hiện tại / hôm nay / ngày mai
+  if (/(hôm nay còn việc|hôm nay có quest|quest hiện tại|khung giờ hiện tại|báo cáo|bây giờ làm gì)/.test(low)) {
+    const items = (state.plan && state.plan.items) || [];
+    const qMap = {}; (state.quests || []).forEach((q) => { qMap[q.id] = q; });
+    const topStr = items.slice(0, 4).map((it, i) => `#${i + 1} ${qMap[it.id]?.title || ""}`).join("; ");
+    return showAiReply(
+      items.length
+        ? `🎯 [HỆ THỐNG]: Khung ${state.window?.name || "hiện tại"} có ${items.length} nhiệm vụ ưu tiên: ${topStr}.`
+        : "🔓 [MỞ KHÓA GIỜ CHƠI TỰ DO]: Ký chủ đã hoàn thành 100% nhiệm vụ khung giờ này!",
+      [`Hiển thị ${items.length} quest ưu tiên`]
+    );
+  }
+  if (/(ngày mai có quest|ngày mai có việc|lịch ngày mai|quest ngày mai)/.test(low)) {
+    const tom = localTodayIso(1);
+    const tomQs = (state.quests || []).filter((q) => !q.is_penalty && (q.deadline === tom || q.repeat_min || (q.quota_days && q.quota_days >= 1)));
+    const topStr = tomQs.slice(0, 5).map((q, i) => `#${i + 1} ${q.title} (${q.estimate || 25}p)`).join("; ");
+    return showAiReply(`📅 [HỆ THỐNG]: Ngày mai dự kiến có ${tomQs.length} nhiệm vụ: ${topStr || "Chưa có"}. Ký chủ có thể nói 'quest thứ 1 ngày mai tôi chắc chắn làm tốt' để cam kết trước!`, [`Lịch ngày mai: ${tomQs.length} việc`]);
+  }
+
+  // 2. Hậu kiểm trung thực ("nãy tôi không làm")
+  if (/(nãy tôi không làm|nãy không làm|thực tế không làm|tôi chưa làm|hủy hoàn thành)/.test(low)) {
+    const { q } = resolveQuestByText(low);
+    const rev = revokeQuest(q ? q.id : null);
+    if (!rev) return;
+    return showAiReply(
+      rev.penalized
+        ? `⚖️ [HỆ THỐNG KỶ LUẬT]: Đã thu hồi điểm của '${rev.title}'. Do mức quan trọng ${rev.importance}/5, Hệ thống kích hoạt phạt ${rev.level_name}!`
+        : `⚖️ [HỆ THỐNG]: Đã thu hồi điểm của '${rev.title}' và trả về danh sách cần làm (Miễn phạt do mức quan trọng ${rev.importance}/5).`,
+      [`Thu hồi: ${rev.title}`]
+    );
+  }
+
+  // 3. Quên tích hôm qua
+  if (/(quên tích|quên đánh dấu|hôm qua làm rồi)/.test(low)) {
+    if (state.debts && state.debts.length) {
+      const d = state.debts.pop();
+      saveState(state, true);
+      return showAiReply(`✅ [HỆ THỐNG]: Đã xóa nợ phạt '${d.quest_title}' và khôi phục điểm kỷ luật cho Ký chủ!`, [`Xóa phạt oan: ${d.quest_title}`]);
+    }
+    return showAiReply("✅ Hiện tại Ký chủ không có khoản nợ phạt nào.", []);
+  }
+
+  // 4. Tạo quest mới theo mọi biến thể (X lần/Y ngày, lặp lại Thứ hàng tuần, 1/ngày)
+  if (/(tạo quest|thêm quest|tạo nhiệm vụ|thêm nhiệm vụ|giao quest|tạo việc)/.test(low)) {
+    let rawTitle = msg.replace(/^.*?(?:tạo\s+quest|thêm\s+quest|tạo\s+nhiệm\s+vụ|thêm\s+nhiệm\s+vụ|giao\s+quest|tạo\s+việc)\s*(?:mới\s*)?/i, "").trim();
+    let cleanTitle = rawTitle.replace(/(?:,\s*|\s+)(?:lặp\s+lại.*|hạn\s+chót.*|hạn\s+là.*|hạn\s+vào.*|\d+\s*(?:ngày|tuần)\s*(?:làm\s*)?\d+\s*lần.*|(?:làm\s*)?\d+\s*(?:lần\s*)?(?:\/|trên|trong|mỗi)\s*\d*\s*(?:ngày|tuần).*|ngày\s+nào\s+cũng.*|hàng\s+ngày.*|mỗi\s+ngày.*|độ\s+quan\s+trọng.*|thời\s+lượng.*)$/i, "").trim().replace(/^[,.\-:;]+|[,.\-:;]+$/g, "");
+    if (cleanTitle && !["này", "đó", "vừa nãy", "hiện tại"].includes(cleanTitle.toLowerCase())) {
+      const mImp = low.match(/(?:quan trọng|mức)\s*(?:là\s*)?([1-5])/) || low.match(/\b([1-5])\s*\/\s*5\b/);
+      const imp = mImp ? parseInt(mImp[1], 10) : 3;
+      const mDur = low.match(/(\d{2,3})\s*(phút|p\b)/);
+      const dur = mDur ? parseInt(mDur[1], 10) : 30;
+      const dlWin = low.includes("sáng") ? "Sáng" : (low.includes("chiều") ? "Chiều" : (low.includes("tối") ? "Tối" : null));
+      const dlTime = dlWin === "Sáng" ? "11:30" : (dlWin === "Chiều" ? "17:30" : (dlWin === "Tối" ? "22:00" : null));
+      const nextId = Math.max(0, ...(state.quests || []).map((x) => x.id)) + 1;
+      const qc = flex.qc || 1, qd = flex.qd || 1;
+      state.quests.push({
+        id: nextId,
+        title: cleanTitle,
+        importance: imp,
+        estimate: dur,
+        duration_min: dur,
+        xp: 10 * imp,
+        points: 5 * imp,
+        repeat_min: flex.hasFlex ? qd : null,
+        repeat_max: flex.hasFlex ? qd : null,
+        quota_count: qc,
+        quota_days: qd,
+        repeat_weekday: flex.rwk,
+        deadline: (dlWin || flex.rwk !== null) ? (low.includes("mai") ? localTodayIso(1) : state.date) : null,
+        deadline_time: dlTime,
+        deadline_window: dlWin,
+        window_names: [dlWin || "Tối"],
+        done_today: false,
+        stats: [{ stat_id: 1, name: "Tự học & Kỷ luật", amount: 1.5 }]
+      });
+      saveState(state, true);
+      return showAiReply(
+        `⚡ [HỆ THỐNG ĐÃ KHỞI TẠO QUEST]: Đã tạo '${cleanTitle}' (${flex.summary || "Làm 1 lần"} • Mức ${imp}/5 • ${dur}p${dlTime ? " • Hạn " + dlTime : ""}) và đồng bộ đám mây!`,
+        [`Tạo: ${cleanTitle} (${flex.summary || "1 lần"})`]
+      );
+    }
+  }
+
+  // 5. Chỉnh sửa cơ chế lặp (X lần/Y ngày, Thứ hàng tuần), hạn chót, độ quan trọng, thời lượng của quest hiện có
+  const hasDl = /(hạn chót|hạn là|hạn vào|hạn trước|đổi hạn|sửa hạn|chiều nay|tối nay|sáng mai|ngày mai)/.test(low);
+  const hasImp = /(?:quan trọng|mức)\s*(?:là\s*|lên\s*|thành\s*)?[1-5]|\b[1-5]\s*\/\s*5\b/.test(low);
+  const hasDur = /(?:thời lượng|ước tính|đổi thời gian|kéo dài)\s*\d+\s*(?:phút|p\b|tiếng|giờ)/.test(low);
+  if (flex.hasFlex || hasDl || hasImp || hasDur) {
+    const { q } = resolveQuestByText(low);
+    if (q) {
+      if (flex.hasFlex) {
+        if (flex.qc !== null) q.quota_count = flex.qc;
+        if (flex.qd !== null) { q.quota_days = flex.qd; q.repeat_min = q.repeat_max = flex.qd; }
+        if (flex.rwk !== null) q.repeat_weekday = flex.rwk;
+      }
+      const mImp = low.match(/(?:quan trọng|mức)\s*(?:là\s*|lên\s*|thành\s*)?([1-5])/) || low.match(/\b([1-5])\s*\/\s*5\b/);
+      if (mImp) { q.importance = parseInt(mImp[1], 10); q.xp = 10 * q.importance; q.points = 5 * q.importance; }
+      const mDur = low.match(/(\d{2,3})\s*(phút|p\b)/);
+      if (mDur) { q.estimate = parseInt(mDur[1], 10); q.duration_min = q.estimate; }
+      if (hasDl || flex.rwk !== null) {
+        if (low.includes("mai")) q.deadline = localTodayIso(1);
+        else if (low.includes("nay")) q.deadline = localTodayIso(0);
+        if (low.includes("sáng")) { q.deadline_window = "Sáng"; q.deadline_time = "11:30"; }
+        else if (low.includes("chiều")) { q.deadline_window = "Chiều"; q.deadline_time = "17:30"; }
+        else if (low.includes("tối")) { q.deadline_window = "Tối"; q.deadline_time = "22:00"; }
+        const mHr = low.match(/(\d{1,2})\s*(?:giờ|h|:)\s*(\d{0,2})\s*(sáng|chiều|tối)?/);
+        if (mHr && !mDur) {
+          let h = parseInt(mHr[1], 10), m = parseInt(mHr[2] || "0", 10);
+          if ((mHr[3] === "chiều" || mHr[3] === "tối") && h < 12) h += 12;
+          q.deadline_time = String(Math.min(23, h)).padStart(2, "0") + ":" + String(Math.min(59, m)).padStart(2, "0");
+        }
+      }
+      saveState(state, true);
+      return showAiReply(
+        `⚖️ [HỆ THỐNG ĐÃ TÁI THIẾT LẬP ƯU TIÊN]: Đã cập nhật '${q.title}' (${flex.summary || q.quota_label || "Mức " + q.importance + "/5"} • ${q.estimate}p${q.deadline_time ? " • Hạn " + q.deadline_time : ""})!`,
+        [`Cập nhật: ${q.title}`]
+      );
+    }
+  }
+
+  // 6. Check hoàn thành / Cam kết trước theo STT
+  if (/(hoàn thành|làm xong|đã làm|check|chắc chắn sẽ làm|chắc chắn làm|tối tôi có thể làm|tối tôi làm|làm mức)/.test(low)) {
+    const { q, stt } = resolveQuestByText(low);
+    if (q) {
+      let qual = "good";
+      if (/(rất tốt|xuất sắc|100%)/.test(low)) qual = "great";
+      else if (/(mức vừa|tạm|55%)/.test(low)) qual = "medium";
+      else if (/(mức tệ|tệ|30%)/.test(low)) qual = "bad";
+      finishQuestQuick(q.id, qual);
+      return showAiReply(`✅ [HỆ THỐNG]: Đã ghi nhận hoàn thành ${stt ? "#" + stt + " " : ""}'${q.title}' và đồng bộ lên đám mây!`, [`Hoàn thành: ${q.title}`]);
+    }
+  }
+
+  // 7. Việc tốt phát sinh / việc nhà phụ mẹ
+  if (/(phụ mẹ|giúp mẹ|việc nhà|dọn phòng|rửa bát|nấu cơm|cộng chỉ số)/.test(low)) {
+    state.analytics = state.analytics || {};
+    state.analytics.weekly_review = state.analytics.weekly_review || { diligence_pct: 85, obedience_pct: 85 };
+    state.analytics.weekly_review.diligence_pct = Math.min(100, (state.analytics.weekly_review.diligence_pct || 85) + 3);
+    state.analytics.weekly_review.obedience_pct = Math.min(100, (state.analytics.weekly_review.obedience_pct || 85) + 2.5);
+    state.player.xp = (state.player.xp || 0) + 15;
+    state.player.points = (state.player.points || 0) + 10;
+    saveState(state, true);
+    return showAiReply("🌟 [HỆ THỐNG GHI NHẬN]: Đã cộng +3% Độ siêng năng, +2.5% Điểm nghe lời, +15 XP, +10 điểm thưởng!", ["+3% Siêng năng", "+15 XP, +10đ"]);
+  }
+
+  // 8. Gọi Gemini API trực tiếp nếu có key
+  const gemKey = (state.settings && state.settings.gemini_api_key || "").trim();
+  if (gemKey) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(gemKey)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: `Bạn là Hệ thống Siêu Học Bá (xưng Hệ thống, gọi người dùng là Ký chủ). Trả lời ngắn gọn 1-2 câu cho: ${msg}` }] }] })
+      });
+      if (res.ok) {
+        const j = await res.json();
+        const txt = j?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (txt) return showAiReply(txt.trim(), []);
+      }
+    } catch (e) {}
+  }
+
+  showAiReply("⚡ [HỆ THỐNG]: Đã cập nhật thứ tự ưu tiên nhiệm vụ hiện tại cho Ký chủ.", []);
+}
+
+/* ================= GIỌNG ĐỌC & MIC TIẾNG VIỆT (0 MB) ================= */
+function speakVi(text) {
+  try {
+    if (!("speechSynthesis" in window) || !text) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(String(text).replace(/[*#_`~]/g, ""));
+    u.lang = "vi-VN";
+    u.rate = 1.06;
+    const vs = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+    const vi = vs.find((v) => (v.lang || "").toLowerCase().includes("vi"));
+    if (vi) u.voice = vi;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+function speakBriefing() {
+  const items = (state.plan && state.plan.items) || [];
+  const qMap = {}; (state.quests || []).forEach((q) => { qMap[q.id] = q; });
+  const topNames = items.slice(0, 3).map((it, i) => `số ${i + 1}: ${qMap[it.id]?.title || ""}`).join(", ");
+  const msg = items.length
+    ? `Báo cáo Ký chủ: Trong khung giờ ${state.window?.name || "hiện tại"}, bạn có ${items.length} nhiệm vụ cần ưu tiên là ${topNames}. Hoàn thành xong sẽ mở khóa Giờ Chơi Tự Do!`
+    : "Chúc mừng Ký chủ! Bạn đã hoàn thành hết nhiệm vụ khung giờ này và mở khóa Giờ Chơi Tự Do!";
+  toast("🔊 Đang đọc báo cáo...");
+  speakVi(msg);
+}
+
+let srInst = null, srListening = false;
+function toggleVoiceMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const btn = $("btnMic");
+  const inp = $("cmdInp");
+  if (!SR) {
+    toast("Hãy bấm biểu tượng 🎤 trên bàn phím điện thoại hoặc gọi 'Hey Google'!");
+    if (inp) inp.focus();
+    return;
+  }
+  if (srListening && srInst) {
+    try { srInst.stop(); } catch (e) {}
+    return;
+  }
+  try {
+    const sr = new SR();
+    srInst = sr;
+    sr.lang = "vi-VN";
+    sr.interimResults = true;
+    sr.onstart = () => { srListening = true; btn.textContent = "🔴"; btn.className = "btn danger"; inp.placeholder = "🎙️ Đang nghe Ký chủ nói..."; };
+    sr.onresult = (ev) => {
+      let t = "";
+      for (let i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript;
+      inp.value = t.trim();
+      if (ev.results[ev.results.length - 1].isFinal && t.trim()) setTimeout(() => sendCommand(), 120);
+    };
+    sr.onerror = () => { srListening = false; btn.textContent = "🎤"; btn.className = "btn"; };
+    sr.onend = () => { srListening = false; btn.textContent = "🎤"; btn.className = "btn"; inp.placeholder = "Nói/nhập: 'tạo quest X 3 ngày làm 2 lần', 'check quest 1'..."; };
+    sr.start();
+  } catch (e) {}
+}
+
+/* ================= CẤU HÌNH ĐỒNG BỘ ĐÁM MÂY GITHUB GIST ================= */
+function openSyncModal() {
+  const cfg = loadCloudCfg();
+  $("inpGhToken").value = cfg.token || "";
+  $("inpGistId").value = cfg.gist_id || "";
+  $("inpGeminiKey").value = (state && state.settings && state.settings.gemini_api_key) || "";
+  $("modalSyncStatus").textContent = cfg.last_status || "";
+  $("syncModal").classList.add("show");
+}
+function closeSyncModal() {
+  $("syncModal").classList.remove("show");
+}
+
+async function saveCloudConfig() {
+  let tok = ($("inpGhToken").value || "").trim();
+  let gid = ($("inpGistId").value || "").trim();
+  const gem = ($("inpGeminiKey").value || "").trim();
+  if (state && state.settings) state.settings.gemini_api_key = gem;
+  if (tok.includes("|") && !gid) {
+    const sp = tok.split("|");
+    gid = sp[0].trim();
+    tok = (sp[1] || "").trim();
+  }
+  tok = cleanToken(tok);
+  gid = cleanGistId(gid);
+  const stEl = $("modalSyncStatus");
+  if (!tok) {
+    saveCloudCfgLocal({});
+    saveState(state, false);
+    closeSyncModal();
+    return toast("Đã tắt đồng bộ đám mây.");
+  }
+  stEl.textContent = "⏳ Đang kết nối với GitHub Gist...";
+  try {
+    if (!gid) {
+      const rList = await ghFetch("https://api.github.com/gists?per_page=100", tok, "GET");
+      if (!rList || !rList.ok) {
+        stEl.textContent = "⚠️ Token không hợp lệ hoặc thiếu quyền gist.";
+        return;
+      }
+      const list = await rList.json();
+      const found = (Array.isArray(list) ? list : []).find((g) => g.files && g.files["system_quest_cloud_sync.json"]);
+      if (found) gid = found.id;
+    }
+    if (!gid) {
+      const cleanSnap = sanitizeForCloud(state);
+      const rCreate = await ghFetch("https://api.github.com/gists", tok, "POST", {
+        description: "SYSTEM - Dữ liệu Đồng bộ Tự động PC & Điện thoại",
+        public: false,
+        files: { "system_quest_cloud_sync.json": { content: JSON.stringify({ bundle: "system_quest_parts", version: "20.2", exported_at: new Date().toISOString().slice(0, 19), source: "mobile", state_snapshot: cleanSnap }) } }
+      });
+      if (!rCreate || !rCreate.ok) {
+        stEl.textContent = "⚠️ Không tạo được Gist. Hãy kiểm tra quyền gist của Token!";
+        return;
+      }
+      const cr = await rCreate.json();
+      gid = cr.id;
+    }
+    saveCloudCfgLocal({ token: tok, gist_id: gid, enabled: true, last_status: "Đã kết nối tự động" });
+    const pullRes = await cloudPull();
+    if (!pullRes.ok) await cloudPush(state);
+    closeSyncModal();
+    toast("☁️ Đã kết nối & đồng bộ 2 chiều thành công!");
+  } catch (e) {
+    stEl.textContent = "⚠️ Lỗi: " + String(e);
+  }
+}
+
+async function manualCloudPull() {
+  $("modalSyncStatus").textContent = "⏳ Đang tải từ đám mây...";
+  const r = await cloudPull();
+  $("modalSyncStatus").textContent = r.ok ? "✅ Đã tải dữ liệu mới nhất!" : ("⚠️ " + r.error);
+  if (r.ok) toast("⬇️ Đã cập nhật từ Đám mây!");
+}
+async function manualCloudPush() {
+  $("modalSyncStatus").textContent = "⏳ Đang đẩy lên đám mây...";
+  const r = await cloudPush(state);
+  $("modalSyncStatus").textContent = r.ok ? "✅ Đã đẩy lên đám mây!" : ("⚠️ " + r.error);
+  if (r.ok) toast("⬆️ Đã đẩy dữ liệu lên Đám mây!");
+}
+async function syncNowManual() {
+  const cfg = loadCloudCfg();
+  if (!cfg.enabled) return openSyncModal();
+  toast("🔄 Đang đồng bộ đám mây...");
+  const r = await cloudPull();
+  if (r.ok) toast("✅ Đã đồng bộ mới nhất!");
+  else toast("⚠️ " + (r.error || "Lỗi đồng bộ"));
+}
+
+function openHeyGoogleHelp() {
+  $("heyGoogleModal").classList.add("show");
+}
+function copyStateForGemini() {
+  const lines = (state.quests || []).filter((q) => !q.is_penalty).map((q, i) => `#${i + 1} [${q.done_today ? "ĐÃ XONG" : "CHƯA XONG"}] ${q.title} (${q.importance}/5 • ${q.estimate}p • ${q.quota_label || "1 lần"})`);
+  copyTxt("Báo cáo trạng thái Hệ thống Siêu Học Bá:\n" + lines.join("\n"));
+}
+
+/* ================= KHỞI ĐỘNG SIÊU TỐC ================= */
+(async function boot() {
+  if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+  state = loadState();
+  renderApp();
+
+  const cfg = loadCloudCfg();
+  if (cfg.token) {
+    if (cfg.gist_id) {
+      await cloudPull();
+    } else {
+      $("inpGhToken").value = cfg.token;
+      await saveCloudConfig();
+    }
+  }
+
+  try {
+    const p = new URLSearchParams(window.location.search || "");
+    if (p.get("cmd")) setTimeout(() => quickCmd(p.get("cmd")), 200);
+    else if (p.get("voice") === "1") setTimeout(() => toggleVoiceMic(), 300);
+  } catch (e) {}
+
+  // Tự động đồng bộ ngầm mỗi 30 giây
+  setInterval(async () => {
+    const c = loadCloudCfg();
+    if (c.enabled) await cloudPull();
+    else { state = recomputeState(state); renderApp(); }
+  }, 30000);
+})();
+</script>
+</body>
+</html>
