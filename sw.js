@@ -1,5 +1,5 @@
-const CACHE_NAME = 'system-quest-v20';
-const ASSETS = ['./', './index.html', './manifest.json'];
+const CACHE_NAME = 'system-quest-v21';
+const ASSETS = ['./', './index.html', './manifest.json', './icon.ico'];
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
@@ -9,14 +9,34 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(self.clients.claim());
+  e.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', (e) => {
-  if (e.request.method !== 'GET' || e.request.url.includes('/api/') || e.request.url.includes('api.github.com')) {
+  const url = e.request.url || '';
+  if (
+    e.request.method !== 'GET' ||
+    url.includes('/api/') ||
+    url.includes('api.github.com') ||
+    url.includes('raw.githubusercontent.com') ||
+    url.includes('generativelanguage.googleapis.com') ||
+    url.includes('api.qrserver.com')
+  ) {
     return;
   }
   e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
+    fetch(e.request, { cache: 'no-cache' })
+      .then((res) => {
+        if (res && res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone)).catch(() => {});
+        }
+        return res;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
