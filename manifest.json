@@ -1,0 +1,18 @@
+{
+  "name": "SYSTEM - Hệ thống Siêu Học Bá",
+  "short_name": "SYSTEM",
+  "description": "Hệ thống Siêu Học Bá tự động điều phối nhiệm vụ, tính chỉ số chân thật và đồng bộ 2 chiều PC - Điện thoại.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#040a16",
+  "theme_color": "#040a16",
+  "icons": [
+    {
+      "src": "icon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
